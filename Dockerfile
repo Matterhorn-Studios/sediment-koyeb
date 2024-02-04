@@ -5,23 +5,23 @@ FROM node:20
 WORKDIR /app
 
 # Copy the package.json and bun.lockb to the container
-COPY package.json bun.lockb ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install Bun
-RUN npm install -g bun
+RUN npm install -g pnpm
 
 # Install project dependencies using Bun
-RUN bun install
+RUN pnpm install
 
 # Copy the rest of the application code to the container
 COPY . .
 
 # Build your SvelteKit application using Bun
-RUN bun run build
+RUN pnpm run build
 
 # Expose the port your SvelteKit app will run on
 ENV PORT=8080
 EXPOSE $PORT
 
 # Start the SvelteKit application
-CMD ["bun", "./build/index.js"]
+CMD ["pnpm", "./build/index.js"]
