@@ -1,9 +1,4 @@
-import {
-	GITHUB_CLIENT_ID,
-	GITHUB_CLIENT_SECRET,
-	GOOGLE_CLIENT_ID,
-	GOOGLE_CLIENT_SECRET
-} from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { DrizzleMySQLAdapter } from '@lucia-auth/adapter-drizzle';
 import { redirect } from '@sveltejs/kit';
 import { GitHub, Google } from 'arctic';
@@ -13,7 +8,7 @@ import { session, user } from './db/schema';
 
 const adapter = new DrizzleMySQLAdapter(db, session, user);
 
-export const github = new GitHub(GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET);
+export const github = new GitHub(env.GITHUB_CLIENT_ID || '', env.GITHUB_CLIENT_SECRET || '');
 
 const baseUrl = process.env.VERCEL_URL
 	? `https://${process.env.VERCEL_URL}`
@@ -21,7 +16,11 @@ const baseUrl = process.env.VERCEL_URL
 
 const redirectUrl = `${baseUrl}/auth/callback/google`;
 
-export const google = new Google(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, redirectUrl);
+export const google = new Google(
+	env.GOOGLE_CLIENT_ID || '',
+	env.GOOGLE_CLIENT_SECRET || '',
+	redirectUrl
+);
 
 export const lucia = new Lucia(adapter, {
 	sessionCookie: {
